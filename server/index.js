@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const app = require("./server.js");
-require("dotenv").config();
+// require("dotenv").config();
 const bot = require('./bot');
 const { MONGO_URL, PORT } = process.env
 const listen_port = PORT || 6000;
