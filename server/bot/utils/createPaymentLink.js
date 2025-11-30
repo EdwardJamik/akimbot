@@ -1,7 +1,3 @@
-if (!process.env.STRIPE_SECRET_KEY) {
-	throw new Error('TEST_STRIPE_SECRET_KEY is required');
-}
-
 const stripe = require('stripe')(`${process.env.STRIPE_SECRET_KEY}`);
 
 async function createPaymentLink({amount, product, description, chat_id}){
