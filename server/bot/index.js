@@ -1,5 +1,4 @@
 const { Telegraf, Markup } = require('telegraf');
-require('dotenv').config()
 
 const response = require('./response')
 

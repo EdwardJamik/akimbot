@@ -7,7 +7,6 @@ const TestSystem = require('../testSystem/testSystem');
 const {deleteLastMessage, saveLastMessage} = require('../utils/deleteLastMessage')
 const {getCourse, getOptionCourse, findCourseDetail} = require('../utils/courseSync')
 const {handleBack} = require('../utils/handleBack')
-require("dotenv").config();
 
 module.exports = async bot => {
     
