@@ -66,28 +66,32 @@ const blockUser = async (req, res) => {
 }
 
 const sendMediaToTelegram = async (file, type) => {
-	if (!file) return null
-	
-	const chatId = process.env.TELEGRAM_MEDIA_CHAT_ID
-	let response
-	
-	if (type === "image") {
-		response = await bot.telegram.sendPhoto(chatId, { source: file.buffer })
-		return response.photo.at(-1).file_id
+	try {
+		if (!file) return null
+		
+		const chatId = process.env.TELEGRAM_MEDIA_CHAT_ID
+		let response
+		
+		if (type === "image") {
+			response = await bot.telegram.sendPhoto(chatId, { source: file.buffer })
+			return response.photo.at(-1).file_id
+		}
+		
+		if (type === "video") {
+			response = await bot.telegram.sendVideo(chatId, { source: file.buffer })
+			return response.video.file_id
+		}
+		
+		if (type === "audio") {
+			const convertedBuffer = await audioConvert(file.buffer)
+			response = await bot.telegram.sendVoice(chatId, { source: convertedBuffer })
+			return response.voice.file_id
+		}
+		
+		return null
+	} catch (e) {
+		console.error(e)
 	}
-	
-	if (type === "video") {
-		response = await bot.telegram.sendVideo(chatId, { source: file.buffer })
-		return response.video.file_id
-	}
-	
-	if (type === "audio") {
-		const convertedBuffer = await audioConvert(file.buffer)
-		response = await bot.telegram.sendVoice(chatId, { source: convertedBuffer })
-		return response.voice.file_id
-	}
-	
-	return null
 }
 
 const updateMessageTemplate = async (req, res) => {

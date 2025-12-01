@@ -5,6 +5,7 @@ const bot = require('./bot');
 const { MONGO_URL, PORT } = process.env
 const listen_port = PORT || 6000;
 
+console.log(MONGO_URL)
 mongoose.connect(MONGO_URL, {
 }).then(() => {
 	console.log('MongoDB is connected successfully')
@@ -13,4 +14,3 @@ mongoose.connect(MONGO_URL, {
 	})
 	app.listen(listen_port, () => console.log(`Server running on PORT : ${listen_port}`))
 }).catch(err => console.error(err))
-

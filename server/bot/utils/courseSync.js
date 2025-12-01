@@ -123,11 +123,15 @@ async function getOptionCourse({ categoryId, title, selected = '', id = '' }) {
 };
 
 async function findCourseDetail(_id){
-	const res = await Courses
-		.findOne({ _id })
-		.populate("categoryId");
-	
-	return res
+	try{
+		const res = await Courses
+			.findOne({ _id })
+			.populate("categoryId");
+		
+		return res
+	} catch (e) {
+		console.error()
+	}
 }
 
 module.exports = {getCourse, getOptionCourse, findCourseDetail}
