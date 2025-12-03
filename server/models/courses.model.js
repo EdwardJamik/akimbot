@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const courses = new mongoose.Schema({
     title: { type: String, default: null },
     message:  { type: String, default: null },
+    googleId:  { type: String, default: null },
     image:  { type: String, default: null },
     video:  { type: String, default: null },
     audio:  { type: String, default: null },

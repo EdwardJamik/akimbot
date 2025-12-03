@@ -147,6 +147,7 @@ export default function CoursesPage() {
   const [courseForm, setCourseForm] = useState({
     title: "",
     message: "",
+    googleId: "",
     price: 0,
     image: null,
     video: null,
@@ -208,6 +209,7 @@ export default function CoursesPage() {
     setCourseForm({
       title: "",
       message: "",
+      googleId: "",
       image: null,
       video: null,
       audio: null,
@@ -369,34 +371,13 @@ export default function CoursesPage() {
     }
   }
   
-  // Course handlers
-  
-  const handleCourseMediaTypeChange = (type) => {
-    setCourseMediaType(type)
-    setCourseForm({ ...courseForm, image: null, video: null, audio: null })
-  }
-  
-  const handleCourseFileSelect = (file) => {
-    const newForm = { ...courseForm, image: null, video: null, audio: null }
-    if (courseMediaType === "image") newForm.image = file
-    else if (courseMediaType === "video") newForm.video = file
-    else if (courseMediaType === "audio") newForm.audio = file
-    setCourseForm(newForm)
-  }
-  
-  const getCourseCurrentFile = () => {
-    if (courseMediaType === "image") return courseForm.image
-    if (courseMediaType === "video") return courseForm.video
-    if (courseMediaType === "audio") return courseForm.audio
-    return null
-  }
-  
   const handleOpenCourse = (course = null) => {
     if (course) {
       setEditingCourse(course)
       setCourseForm({
         title: course.title || "",
         message: course.message || "",
+        googleId: course.googleId || "",
         image: course?.image || null,
         video: course?.video || null,
         audio: course?.audio || null,
@@ -420,6 +401,8 @@ export default function CoursesPage() {
     formData.append("title", courseForm.title)
     formData.append("message", courseForm.message || "")
     formData.append("price", courseForm.price)
+    formData.append("googleId", courseForm.googleId)
+    
     formData.append("categoryId", selectedCategory._id)
     
     formData.append(
@@ -865,7 +848,7 @@ export default function CoursesPage() {
                   <Label>Назва курсу *</Label>
                   <Input
                     value={courseForm.title}
-                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    onChange={(e) => setCourseForm({...courseForm, title: e.target.value})}
                     placeholder="Наприклад: Python для початківців"
                     className="bg-secondary border-border"
                   />
@@ -875,8 +858,20 @@ export default function CoursesPage() {
                   <Input
                     type="number"
                     value={courseForm.price}
-                    onChange={(e) => setCourseForm({ ...courseForm, price: Number(e.target.value) })}
+                    onChange={(e) => setCourseForm({...courseForm, price: Number(e.target.value)})}
                     placeholder="0"
+                    className="bg-secondary border-border"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <Label>ID директорії Google Drive</Label>
+                  <Input
+                    type="text"
+                    value={courseForm.googleId}
+                    onChange={(e) => setCourseForm({...courseForm, googleId: e.target.value})}
+                    placeholder="ID"
                     className="bg-secondary border-border"
                   />
                 </div>
@@ -886,14 +881,14 @@ export default function CoursesPage() {
             <TabsContent value="options" className="space-y-4 pt-4">
               <div className="flex justify-end">
                 <Button onClick={() => handleOpenOption()} size="sm" className="bg-primary">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4 mr-2"/>
                   Додати опис
                 </Button>
               </div>
               
               {courseForm.option.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <Layers className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <Layers className="w-12 h-12 mx-auto mb-4 opacity-50"/>
                   <p>Ще немає опису</p>
                 </div>
               ) : (
@@ -901,7 +896,7 @@ export default function CoursesPage() {
                   {courseForm.option.map((opt, index) => (
                     <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">
+                      <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">
                           {index + 1}
                         </div>
                         <div>

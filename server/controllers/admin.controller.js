@@ -266,7 +266,7 @@ const getCourses = async (req, res) => {
 
 const createOrUpdateCourse = async (req, res) => {
 	try {
-		const { id, title, message, price, categoryId, option } = req.body
+		const { id, title, message, price, categoryId, option, googleId } = req.body
 		const fileImage = req.files?.image?.[0] || null
 		const fileVideo = req.files?.video?.[0] || null
 		const fileAudio = req.files?.audio?.[0] || null
@@ -292,7 +292,6 @@ const createOrUpdateCourse = async (req, res) => {
 		
 		const parsedOption = option ? JSON.parse(option) : []
 		
-		// Get all optionMedia files from multer (optionMedia_0_image, optionMedia_1_video, etc.)
 		for (let i = 0; i < parsedOption.length; i++) {
 			const optionImageFile = req.files?.[`optionMedia_${i}_image`]?.[0] || null
 			const optionVideoFile = req.files?.[`optionMedia_${i}_video`]?.[0] || null
@@ -319,7 +318,7 @@ const createOrUpdateCourse = async (req, res) => {
 			course.price = price ?? course.price
 			course.categoryId = categoryId ?? course.categoryId
 			course.option = parsedOption
-			
+			course.googleId = googleId
 			course.image = image ?? course.image
 			course.video = video ?? course.video
 			course.audio = audio ?? course.audio
@@ -331,6 +330,7 @@ const createOrUpdateCourse = async (req, res) => {
 				message,
 				price,
 				categoryId,
+				googleId,
 				option: parsedOption,
 				image,
 				video,
