@@ -16,6 +16,16 @@ const getUsers = async (req, res) => {
 	}
 }
 
+const resultPayment = async (req, res) => {
+	try {
+		console.log(req.body)
+		
+	} catch (e) {
+		console.error("Get users error:", e)
+		res.status(500).json({ message: "Server error" })
+	}
+}
+
 module.exports = {
-	getUsers
+	getUsers, resultPayment
 }

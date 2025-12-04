@@ -32,14 +32,16 @@ async function saveLastMessage(ctx, newMessageId) {
 		const chat_id = ctx?.message?.chat?.id || ctx.update?.callback_query?.message?.chat?.id
 		const {last_message_id} = await getUserData({chat_id})
 		
-		await User.updateOne(
-			{chat_id},
-			{
-				last_message_id: Array.isArray(last_message_id)
-					? [...last_message_id, Number(newMessageId)]
-					: [Number(last_message_id), Number(newMessageId)].filter(Boolean)
-			}
-		);
+		if(newMessageId && !isNaN(newMessageId)) {
+			await User.updateOne(
+				{chat_id},
+				{
+					last_message_id: Array.isArray(last_message_id)
+						? [...last_message_id, Number(newMessageId)]
+						: [Number(last_message_id), Number(newMessageId)].filter(Boolean)
+				}
+			)
+		}
 	} catch (e) {
 		console.error(e)
 	}
