@@ -36,30 +36,41 @@ const resultPayment = async (req, res) => {
 		const session = event.data.object;
 		
 		if(event.type === 'checkout.session.completed'){
-			const chat_id = session?.metadata?.chat_id
-			const product_id = session?.metadata?.product_id
-			const price = session?.metadata?.price
-			const payment_mail = session?.customer_details?.email
-			const card_holder = session?.customer_details?.name
-			const payment_id = session?.id
 			
-			const savePayment = await Payments.create({chat_id, price, payment_mail, card_holder, payment_id, product_id, status: true})
-			
-			const message = await findTextButton('success_payment_message');
-			await sendMessageDefault({bot, chat_id, ...message, save: true})
-			await setUserAction({chat_id, action: `paymentSuccess_${product_id}_${savePayment?._id}`})
+			const findPay = await Payments.findOne({payment_id: session?.id})
+			if(!findPay){
+				const chat_id = session?.metadata?.chat_id
+				if(chat_id){
+					const product_id = session?.metadata?.product_id
+					const price = session?.metadata?.price
+					const payment_mail = session?.customer_details?.email
+					const card_holder = session?.customer_details?.name
+					const payment_id = session?.id
+					
+					const savePayment = await Payments.create({chat_id, price, payment_mail, card_holder, payment_id, product_id, status: true})
+					
+					const message = await findTextButton('success_payment_message');
+					await sendMessageDefault({bot, chat_id, ...message, save: true})
+					await setUserAction({chat_id, action: `paymentSuccess_${product_id}_${savePayment?._id}`})
+				}
+			}
 		} else if(event.type === 'checkout.session.expired') {
-			const chat_id = session?.metadata?.chat_id
-			const product_id = session?.metadata?.product_id
-			const price = session?.metadata?.price
-			const payment_id = session?.id
-			
-			const savePayment = await Payments.create({chat_id, price, payment_id, product_id, status: false})
-			
-			const button = await selectButton('start_bot');
-			const message = await findTextButton('expired_payment_message');
-			await sendMessageDefault({bot, chat_id, ...message, button, save: true})
-			await setUserAction({chat_id, action: `paymentExpired_${product_id}_${savePayment?._id}`})
+			const findPay = await Payments.findOne({payment_id: session?.id})
+			if (findPay) {
+				const chat_id = session?.metadata?.chat_id
+				if (chat_id) {
+					const product_id = session?.metadata?.product_id
+					const price = session?.metadata?.price
+					const payment_id = session?.id
+					
+					const savePayment = await Payments.create({chat_id, price, payment_id, product_id, status: false})
+					
+					const button = await selectButton('start_bot');
+					const message = await findTextButton('expired_payment_message');
+					await sendMessageDefault({bot, chat_id, ...message, button, save: true})
+					await setUserAction({chat_id, action: `paymentExpired_${product_id}_${savePayment?._id}`})
+				}
+			}
 		}
 		
 		res.sendStatus(200);
