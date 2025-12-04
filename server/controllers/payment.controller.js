@@ -18,7 +18,28 @@ const getUsers = async (req, res) => {
 
 const resultPayment = async (req, res) => {
 	try {
-		console.log(req.body)
+		console.log('tut')
+		const sig = req.headers['stripe-signature'];
+		
+		let event;
+		try {
+			event = stripe.webhooks.constructEvent(
+				req.body,
+				sig,
+				process.env.STRIPE_WEBHOOK_SECRET
+			);
+		} catch (err) {
+			console.log("❌ Webhook error:", err.message);
+			return res.status(400).send(`Webhook error: ${err.message}`);
+		}
+		
+		// ⬇️ Ось цей івент приходить після успішної оплати
+		if (event.type === 'checkout.session.completed') {
+			const session = event.data.object;
+			console.log("✅ PAYMENT SUCCESS:", session);
+		}
+		
+		res.sendStatus(200);
 		
 	} catch (e) {
 		console.error("Get users error:", e)
