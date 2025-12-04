@@ -103,11 +103,20 @@ class botButtons{
           }
         }
           break
+        case 'approve_mail': {
+          const button = await findButton(['approve_mail_button','repeat_mail_button'])
+          
+          return {
+            inline_keyboard: [
+              [{ text: button[1], callback_data: 'repeat_mail_button' },{ text: button[0], callback_data: 'approve_mail_button' }]
+            ]
+          }
+        }
+          break
         case 'buy_courses': {
           const button = await findButton(['payment_button', 'back_button'])
           
-          const amount = Math.round(course_array?.price * 100);
-          const link = await createPaymentLink({amount, product: `${course_array?.categoryId?.title}`, description: `${course_array?.title}`, chat_id})
+          const link = await createPaymentLink({amount: course_array?.price, product: course_array, chat_id})
           
           return {
             inline_keyboard: [

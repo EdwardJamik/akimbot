@@ -5,6 +5,7 @@ require("dotenv").config();
 const bodyParser = require('body-parser');
 const path = require("path");
 const fs = require("fs");
+const {resultPayment} = require('./controllers/payment.controller')
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	next();
 });
+
+app.post("/api/v1/payment/result", express.raw({ type: "application/json" }), resultPayment)
 
 app.use(express.json());
 app.use(bodyParser.json());

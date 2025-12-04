@@ -144,4 +144,105 @@
 		}
 	}
 	
-	module.exports = { sendMessage };
+	async function sendMessageDefault({ bot, chat_id, image, video, audio, message, button, save = false }) {
+		try {
+			const imageSource = resolveSource(image);
+			const videoSource = resolveSource(video);
+			const audioSource = resolveSource(audio);
+			
+			let sentMessage = null;
+			
+			if (imageSource && !videoSource) {
+				if (message?.length <= 768) {
+					sentMessage = await bot.telegram.sendPhoto(
+						chat_id,
+						imageSource.file_id,
+						{
+							caption: message || '',
+							parse_mode: 'HTML',
+							reply_markup: button,
+							one_time_keyboard: true
+						}
+					);
+				} else {
+					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { parse_mode: 'HTML' });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					
+					await deleteLastMessage(bot, chat_id);
+					
+					if (save) {
+						await saveLastMessage(bot, chat_id, photoMsg.message_id);
+					}
+				}
+			} else if (!imageSource && videoSource) {
+				if (message?.length <= 768) {
+					sentMessage = await bot.telegram.sendVideo(
+						chat_id,
+						videoSource.file_id,
+						{ caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true }
+					);
+					await deleteLastMessage(bot, chat_id);
+				} else {
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					
+					await deleteLastMessage(bot, chat_id);
+					
+					if (save) {
+						await saveLastMessage(bot, chat_id, videoMsg.message_id);
+					}
+				}
+			} else if (audioSource && !imageSource && !videoSource) {
+				const audioMsg = await bot.telegram.sendVoice(chat_id, audioSource.file_id);
+				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+				
+				await deleteLastMessage(bot, chat_id);
+				
+				if (save) {
+					await saveLastMessage(bot, chat_id, audioMsg.message_id);
+				}
+			} else if (!imageSource && !videoSource && message) {
+				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+				await deleteLastMessage(bot, chat_id);
+			} else if (imageSource && videoSource) {
+				if (message?.length <= 768) {
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					
+					await deleteLastMessage(bot, chat_id);
+					
+					if (save) {
+						await saveLastMessage(bot, chat_id, photoMsg.message_id);
+						await saveLastMessage(bot, chat_id, videoMsg.message_id);
+					}
+				} else {
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					
+					await deleteLastMessage(bot, chat_id);
+					
+					if (save) {
+						await saveLastMessage(bot, chat_id, photoMsg.message_id);
+						await saveLastMessage(bot, chat_id, videoMsg.message_id);
+					}
+				}
+			} else {
+				console.warn('Немає контенту для відправки');
+			}
+			
+			if (save) {
+				await saveLastMessage(bot, chat_id, sentMessage?.message_id);
+			}
+			
+			return sentMessage;
+			
+		} catch (e) {
+			console.error(e);
+			return null;
+		}
+	}
+	
+	
+	module.exports = { sendMessage, sendMessageDefault };

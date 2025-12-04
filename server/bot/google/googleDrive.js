@@ -18,16 +18,6 @@ const drive = google.drive({
 	auth,
 });
 
-// Мапа курсів → ID папок у Google Drive
-const COURSE_FOLDERS = {
-	beginner: "1FPPv9jriFx7CBVY0k0AoZ1qIcLVXstjB",
-	advanced: "152rRZJDKr6TNqdzRCXWtSZreYeHo6tzi",
-	vip:      "15gLa5I7XN68tfGidHO-DPkCiZyjyJ86N",
-};
-
-/**
- * Надання доступу на конкретну папку
- */
 async function giveAccess(folderId, userEmail) {
 	try {
 		await drive.permissions.create({
@@ -59,16 +49,15 @@ async function giveAccess(folderId, userEmail) {
  */
 async function giveAccessByCourse(courseId, userEmail) {
 	try {
-		const folderId = COURSE_FOLDERS[courseId];
 		
-		if (!folderId) {
+		if (!courseId || !userEmail) {
 			return {
 				success: false,
 				error: `Folder for course '${courseId}' not found`,
 			};
 		}
 		
-		return await giveAccess(folderId, userEmail);
+		return await giveAccess(courseId, userEmail);
 		
 	} catch (error) {
 		console.error("❌ giveAccessByCourse error:", error);
