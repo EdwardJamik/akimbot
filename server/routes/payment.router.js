@@ -10,6 +10,6 @@ const router = Router()
 const upload = multer({ storage: multer.memoryStorage() })
 
 router.get("/getUsers", checkAdmin, getUsers)
-router.post("/result", checkAdmin, resultPayment)
+router.post("/result", resultPayment)
 
 module.exports = router
