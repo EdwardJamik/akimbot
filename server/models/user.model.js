@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     },
     action: {
         type: String,
-        default: null
+        default: ''
     },
     ban: {
         type: Boolean,

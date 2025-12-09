@@ -1,4 +1,3 @@
-	// Функція для визначення типу джерела
 	const User = require('../../models/user.model')
 	const {deleteLastMessage, saveLastMessage} = require('./deleteLastMessage')
 	const {audioConvert} = require('./audioConvert')
@@ -6,12 +5,10 @@
 	function resolveSource(input) {
 		if (!input) return null;
 		
-		// Якщо починається з http/https — це URL
 		if (/^https?:\/\//i.test(input)) {
 			return { url: input };
 		}
 		
-		// Інакше вважаємо, що це file_id
 		return { file_id: input };
 	}
 	
@@ -22,7 +19,8 @@
 			const audioSource = resolveSource(audio);
 			
 			let sentMessage = null;
-			
+			console.log('TUT')
+			console.log(imageSource)
 			if (imageSource && !videoSource) {
 				if(message?.length <= 768){
 					sentMessage = await ctx.replyWithPhoto(
@@ -31,7 +29,7 @@
 							caption: message || '',
 							parse_mode: 'HTML',
 							reply_markup: button,
-							one_time_keyboard: true
+							disable_web_page_preview: true, one_time_keyboard: true
 						}
 					);
 				} else {
@@ -42,7 +40,7 @@
 						}
 					);
 					
-					sentMessage = await ctx.replyWithHTML(message, {one_time_keyboard: true, reply_markup: button});
+					sentMessage = await ctx.replyWithHTML(message, {disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button});
 					await deleteLastMessage(ctx)
 					
 					if(save){
@@ -58,7 +56,7 @@
 							caption: message || '',
 							parse_mode: 'HTML',
 							reply_markup: button,
-							one_time_keyboard: true
+							disable_web_page_preview: true, one_time_keyboard: true
 						}
 					);
 					await deleteLastMessage(ctx)
@@ -69,10 +67,10 @@
 							caption: message || '',
 							parse_mode: 'HTML',
 							reply_markup: button,
-							one_time_keyboard: true
+							disable_web_page_preview: true, one_time_keyboard: true
 						}
 					);
-					sentMessage = await ctx.replyWithHTML(message, {one_time_keyboard: true, reply_markup: button});
+					sentMessage = await ctx.replyWithHTML(message, {disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button});
 					
 					await deleteLastMessage(ctx)
 					
@@ -84,7 +82,7 @@
 			else if (audioSource && !imageSource && !videoSource) {
 					const {message_id} = await ctx.replyWithVoice(audioSource.file_id);
 					
-					sentMessage = await ctx.replyWithHTML(message, {one_time_keyboard: true, reply_markup: button});
+					sentMessage = await ctx.replyWithHTML(message, {disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button});
 					
 				await deleteLastMessage(ctx)
 				
@@ -93,18 +91,18 @@
 				}
 			}
 			else if (!imageSource && !videoSource && message) {
-				sentMessage = await ctx.replyWithHTML(message, {one_time_keyboard: true, reply_markup: button});
+				sentMessage = await ctx.replyWithHTML(message, {disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button});
 				await deleteLastMessage(ctx)
 			}
 			else if (imageSource && videoSource) {
 				if (message?.length <= 768) {
 					const {message_id} = await ctx.replyWithVideo(
 						videoSource.file_id,
-						{parse_mode: 'HTML', one_time_keyboard: true, reply_markup: button}
+						{parse_mode: 'HTML', disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button}
 					);
 					sentMessage = await ctx.replyWithPhoto(
 						imageSource.file_id,
-						{caption: message || '', parse_mode: 'HTML', one_time_keyboard: true, reply_markup: button}
+						{caption: message || '', parse_mode: 'HTML', disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button}
 					);
 					await deleteLastMessage(ctx)
 					if (save) {
@@ -113,13 +111,13 @@
 				} else{
 					const sendVideo = await ctx.replyWithVideo(
 						videoSource.file_id,
-						{parse_mode: 'HTML', one_time_keyboard: true, reply_markup: button}
+						{parse_mode: 'HTML', disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button}
 					);
 					const sendPhoto = await ctx.replyWithPhoto(
 						imageSource.file_id,
-						{caption: message || '', parse_mode: 'HTML', one_time_keyboard: true, reply_markup: button}
+						{caption: message || '', parse_mode: 'HTML', disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button}
 					);
-					sentMessage = await ctx.replyWithHTML(message, {one_time_keyboard: true, reply_markup: button});
+					sentMessage = await ctx.replyWithHTML(message, {disable_web_page_preview: true, one_time_keyboard: true, reply_markup: button});
 					await deleteLastMessage(ctx)
 					if (save) {
 						await saveLastMessage(ctx, sendPhoto?.message_id)
@@ -161,12 +159,12 @@
 							caption: message || '',
 							parse_mode: 'HTML',
 							reply_markup: button,
-							one_time_keyboard: true
+							disable_web_page_preview: true, one_time_keyboard: true
 						}
 					);
 				} else {
 					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { parse_mode: 'HTML' });
-					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 					
 					await deleteLastMessage(bot, chat_id);
 					
@@ -179,12 +177,12 @@
 					sentMessage = await bot.telegram.sendVideo(
 						chat_id,
 						videoSource.file_id,
-						{ caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true }
+						{ caption: message || '', parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true }
 					);
 					await deleteLastMessage(bot, chat_id);
 				} else {
-					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
-					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 					
 					await deleteLastMessage(bot, chat_id);
 					
@@ -194,7 +192,7 @@
 				}
 			} else if (audioSource && !imageSource && !videoSource) {
 				const audioMsg = await bot.telegram.sendVoice(chat_id, audioSource.file_id);
-				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 				
 				await deleteLastMessage(bot, chat_id);
 				
@@ -202,13 +200,13 @@
 					await saveLastMessage(bot, chat_id, audioMsg.message_id);
 				}
 			} else if (!imageSource && !videoSource && message) {
-				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+				sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 				await deleteLastMessage(bot, chat_id);
 			} else if (imageSource && videoSource) {
 				if (message?.length <= 768) {
-					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
-					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
-					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
+					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 					
 					await deleteLastMessage(bot, chat_id);
 					
@@ -217,9 +215,9 @@
 						await saveLastMessage(bot, chat_id, videoMsg.message_id);
 					}
 				} else {
-					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
-					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
-					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, one_time_keyboard: true });
+					const videoMsg = await bot.telegram.sendVideo(chat_id, videoSource.file_id, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
+					const photoMsg = await bot.telegram.sendPhoto(chat_id, imageSource.file_id, { caption: message || '', parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
+					sentMessage = await bot.telegram.sendMessage(chat_id, message, { parse_mode: 'HTML', reply_markup: button, disable_web_page_preview: true, one_time_keyboard: true });
 					
 					await deleteLastMessage(bot, chat_id);
 					
@@ -243,6 +241,5 @@
 			return null;
 		}
 	}
-	
 	
 	module.exports = { sendMessage, sendMessageDefault };

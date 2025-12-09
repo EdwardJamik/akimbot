@@ -39,25 +39,15 @@ function LoginForm() {
           <div className="mx-auto w-16 h-16 rounded-2xl bg-[var(--primary)]/10 flex items-center justify-center">
             <Bot className="w-8 h-8 text-[var(--primary)]" />
           </div>
-          <div>
-            <CardTitle className="text-2xl font-bold text-[var(--foreground)]">Адмін Панель</CardTitle>
-            <CardDescription className="text-[var(--muted-foreground)]">
-              Введіть пароль для входу в систему
-            </CardDescription>
-          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[var(--foreground)]">
-                Пароль
-              </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Введіть пароль"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 bg-[var(--secondary)] border-[var(--border)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]"

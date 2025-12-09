@@ -16,7 +16,7 @@ module.exports = async bot => {
             const chat_id = ctx.message.chat.id;
             const {action, ban} = await getUserData({chat_id})
             
-            if(action && action.startsWith('paymentSuccess_')){
+            if(action && action?.startsWith('paymentSuccess_')){
             
             } else if(!ban) {
                 await deleteLastMessage(ctx, true)
@@ -39,8 +39,8 @@ module.exports = async bot => {
             const {action, ban} = await getUserData({chat_id})
             const actionOption = action ? action?.split("_") : [null,null,null,null,null];
             
-            if(!action.startsWith('paymentSuccess_') && !ban) {
-                if (data.startsWith('answer_')) {
+            if(action && !action?.startsWith('paymentSuccess_') && !ban) {
+                if (data?.startsWith('answer_')) {
                     const parts = data?.split('_')
                     const questionId = parts[1]
                     const answerIndex = parseInt(parts[2])
@@ -65,7 +65,7 @@ module.exports = async bot => {
                         save: true
                     })
                     await setUserAction({chat_id, action: `${actionOption[0]}_${actionOption[1]}_${course?._id}`})
-                } else if (data.startsWith('goto_')) {
+                } else if (data?.startsWith('goto_')) {
                     const parts = data?.split('_')
                     const course = await getCourse({id: parts[1]})
                     
@@ -81,7 +81,7 @@ module.exports = async bot => {
                     await setUserAction({chat_id, action: `courses_${parts[1]}`})
                 }
             } else if(!ban) {
-                if(action.startsWith('paymentSuccess_') && data === 'approve_mail_button'){
+                if(action?.startsWith('paymentSuccess_') && data === 'approve_mail_button'){
                     
                     const button = await selectButton('start_bot');
                     let message = await findTextButton('success_drive_message');
@@ -100,7 +100,7 @@ module.exports = async bot => {
                     
                     await sendMessage({ctx, ...message, button, save: false})
                     await setUserAction({chat_id, action: ''})
-                } else if(action.startsWith('paymentSuccess_') && data === 'repeat_mail_button'){
+                } else if(action?.startsWith('paymentSuccess_') && data === 'repeat_mail_button'){
                     const message = await findTextButton('success_payment_2_message');
                     await sendMessage({ctx, ...message, save: true})
                 }
@@ -120,7 +120,7 @@ module.exports = async bot => {
             const {action, ban} = await getUserData({chat_id})
             const actionOption = action ? action?.split("_") : [null,null,null,null,null];
             
-            if (!ban && command && command !== 'back_button'  && !action.startsWith('paymentSuccess_')) {
+            if (!ban && command && command !== 'back_button'  && !action?.startsWith('paymentSuccess_')) {
                 switch (command) {
                     case 'courses_button': {
                         const message = await findTextButton('courses_message');
@@ -191,7 +191,7 @@ module.exports = async bot => {
                 const {action} = await getUserData({chat_id})
                 const actionOption = action ? action?.split("_") : [null,null,null,null,null];
                 
-                if (command !== 'back_button' && !action.startsWith('paymentSuccess_')) {
+                if (command !== 'back_button' && !action?.startsWith('paymentSuccess_')) {
                     if (actionOption.length === 1 && actionOption[0] === 'courses') {
                         const course = await getCourse({title: message})
                         
@@ -235,7 +235,7 @@ module.exports = async bot => {
                         await setUserAction({chat_id, action: `${actionOption[0]}_${actionOption[1]}_${course?._id}`})
                     }
                 } else {
-                    if(action.startsWith('paymentSuccess_')){
+                    if(action?.startsWith('paymentSuccess_')){
                         const email = ctx.message.text.trim();
                         
                         const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;

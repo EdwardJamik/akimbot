@@ -49,7 +49,6 @@ export function AdminSidebar() {
           </div>
           <div>
             <h2 className="font-semibold text-[var(--foreground)]">Akim</h2>
-            <p className="text-xs text-[var(--muted-foreground)]">Адмін панель</p>
           </div>
         </div>
       </div>

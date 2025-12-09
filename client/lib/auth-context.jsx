@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
 
   const login = (password) => {
     // Simple password auth without registration
-    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "admin123"
+    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
     if (password === adminPassword) {
       const userData = { isAdmin: true, loginAt: new Date().toISOString() }
       setUser(userData)

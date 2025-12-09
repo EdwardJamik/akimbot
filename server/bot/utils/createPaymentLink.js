@@ -1,3 +1,4 @@
+const Payments = require("../../models/payment.model");
 const stripe = require('stripe')(`${process.env.STRIPE_SECRET_KEY}`);
 
 async function createPaymentLink({amount, product, chat_id}){
@@ -32,7 +33,8 @@ async function createPaymentLink({amount, product, chat_id}){
 			success_url: 'http://localhost:5000/api/v1/payment/result',
 			cancel_url: 'http://localhost:5000/api/v1/payment/result',
 		});
-		
+
+		await Payments.create({chat_id, price:`${product?.price}`, payment_id: session?.id, product_id: `${product?._id}`, status: false})
 		return session.url
 	} catch (e) {
 		console.error(e)
