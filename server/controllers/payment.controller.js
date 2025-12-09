@@ -51,7 +51,7 @@ const resultPayment = async (req, res) => {
 					
 					const message = await findTextButton('success_payment_message');
 					await sendMessageDefault({bot, chat_id, ...message, save: true})
-					await setUserAction({chat_id, action: `paymentSuccess_${product_id}_${savePayment?._id}`})
+					await setUserAction({chat_id, action: `paymentSuccess_${product_id}_${findPay?._id}`})
 				}
 			}
 		} else if(event.type === 'checkout.session.expired') {
@@ -69,7 +69,7 @@ const resultPayment = async (req, res) => {
 					const button = await selectButton('start_bot');
 					const message = await findTextButton('expired_payment_message');
 					await sendMessageDefault({bot, chat_id, ...message, button, save: true})
-					await setUserAction({chat_id, action: `paymentExpired_${product_id}_${savePayment?._id}`})
+					await setUserAction({chat_id, action: `paymentExpired_${product_id}_${findPay?._id}`})
 				}
 			}
 		}

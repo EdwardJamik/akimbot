@@ -30,8 +30,8 @@ async function createPaymentLink({amount, product, chat_id}){
 			},
 			expires_at: Math.floor(Date.now() / 1000) + 1800,
 			mode: 'payment',
-			success_url: 'http://localhost:5000/api/v1/payment/result',
-			cancel_url: 'http://localhost:5000/api/v1/payment/result',
+			success_url: 'https://kptikptekpta.pp.ua/pay/success/',
+			cancel_url: 'https://kptikptekpta.pp.ua/pay/cancel/',
 		});
 
 		await Payments.create({chat_id, price:`${product?.price}`, payment_id: session?.id, product_id: `${product?._id}`, status: false})
