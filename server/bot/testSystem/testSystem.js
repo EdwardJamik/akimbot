@@ -290,7 +290,6 @@ class TestSystem {
 			let messageText = await findButton(['result_template_message']);
 			messageText = messageText[0].replace(/{{correct_answer}}/g, correctCount);
 
-// ✅ 1) Якщо ≥ 80% — рівень пройдено
 			if (passed) {
 				const currentLevelIndex = LEVELS.indexOf(current_level);
 				const nextLevel = LEVELS[currentLevelIndex + 1];
@@ -343,12 +342,12 @@ class TestSystem {
 				return;
 			}
 
-// ✅ 2) Якщо 65–70% — “майже пройшов”
 			if (borderline) {
 				const currentLevelIndex = LEVELS.indexOf(current_level);
 				const nextLevel = LEVELS[currentLevelIndex + 1];
 
 				const findRecCourse = await Task.findOne({ type: current_level }).populate('recommended_course_id');
+				const percentage = Math.round((correctCount / totalQuestions) * 100);
 
 				let buttons = [];
 
@@ -376,12 +375,12 @@ class TestSystem {
 					]);
 				}
 
-				const correctCount = levelAnswers.filter(ans => ans.correct).length;
 				let borderlineMsg = await findButton(['result_borderline_template_message']);
 				borderlineMsg = borderlineMsg[0]
 					.replace(/{{current_level}}/g, current_level)
 					.replace(/{{next_level}}/g, nextLevel || current_level)
-					.replace(/{{correct_answer}}/g, correctCount);
+					.replace(/{{correct_answer}}/g, correctCount)
+					.replace(/{{percentage}}/g, percentage);
 
 				await sendMessage({
 					ctx,
