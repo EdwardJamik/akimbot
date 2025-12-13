@@ -158,6 +158,24 @@ class botButtons{
           return [{ text: button[0], callback_data: 'end_test' }]
         }
           break
+        case 'end_test_repeat': {
+          const button = await findButton(['success_end_test_button','decline_end_test_button'])
+          return          {
+            inline_keyboard: [
+              [
+                {
+                  text: button[1],
+                  callback_data: `success_end_test`
+                },
+                {
+                  text: button[0],
+                  callback_data: `repeat_test`
+                }
+              ]
+            ]
+          }
+        }
+          break
         
         default:
         {

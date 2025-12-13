@@ -39,7 +39,7 @@ module.exports = async bot => {
             const {action, ban} = await getUserData({chat_id})
             const actionOption = action ? action?.split("_") : [null,null,null,null,null];
             
-            if(action && !action?.startsWith('paymentSuccess_') && !ban) {
+            if(!action?.startsWith('paymentSuccess_') && !ban) {
                 if (data?.startsWith('answer_')) {
                     const parts = data?.split('_')
                     const questionId = parts[1]
@@ -53,7 +53,25 @@ module.exports = async bot => {
                 } else if (data === 'end_test') {
                     await ctx.answerCbQuery()
                     await deleteLastMessage(ctx)
+                    const button = await selectButton('end_test_repeat');
+                    let message = await findTextButton('end_test_message');
+                    await sendMessage({
+                        ctx,
+                        image: message?.image,
+                        video: message?.video,
+                        message: message?.message,
+                        button: button,
+                        save: true
+                    })
+                } else if(data === 'success_end_test'){
+                    await ctx.answerCbQuery()
+                    await deleteLastMessage(ctx)
                     await TestSystem.finishLevel(ctx)
+                } else if(data === 'repeat_test'){
+                    await ctx.answerCbQuery();
+                    await deleteLastMessage(ctx);
+
+                    await TestSystem.showNextQuestion(ctx);
                 } else if (data === 'back_course_button') {
                     const course = await getOptionCourse({categoryId: actionOption[1], id: actionOption[2]})
                     await sendMessage({

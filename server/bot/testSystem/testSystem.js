@@ -51,7 +51,7 @@ class TestSystem {
 			
 			const { current_level, current_question } = user.test_progress;
 			
-			const questions = await Task.find({type:current_level})
+			const questions = await Task.find({type: current_level})
 				.sort({ question_position: 1 })
 				.lean();
 			
@@ -71,7 +71,7 @@ class TestSystem {
 			
 			const question = questions[current_question];
 			let messageText = await findButton(['task_template_message'])
-			messageText = messageText[0].replace(/{{current_number_task}}/g, current_question + 1).replace(/{{amount_task}}/g, all_question).replace(/{{question}}/g, question.question);
+			messageText = messageText[0].replace(/{{level}}/g, current_level).replace(/{{current_number_task}}/g, current_question + 1).replace(/{{amount_task}}/g, questions.length).replace(/{{question}}/g, question.question);
 			
 			const buttons = [];
 			
