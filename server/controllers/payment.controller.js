@@ -37,7 +37,7 @@ const resultPayment = async (req, res) => {
 		
 		if(event.type === 'checkout.session.completed'){
 			const findPay = await Payments.findOne({payment_id: session?.id})
-			console.log('PAYMENT:',session?.id,findPay)
+
 			if(findPay && !findPay?.status){
 				const chat_id = session?.metadata?.chat_id
 				if(chat_id){

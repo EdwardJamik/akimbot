@@ -19,8 +19,7 @@
 			const audioSource = resolveSource(audio);
 			
 			let sentMessage = null;
-			console.log('TUT')
-			console.log(imageSource)
+
 			if (imageSource && !videoSource) {
 				if(message?.length <= 768){
 					sentMessage = await ctx.replyWithPhoto(

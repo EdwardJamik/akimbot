@@ -84,6 +84,7 @@ module.exports = async bot => {
                     })
                     await setUserAction({chat_id, action: `${actionOption[0]}_${actionOption[1]}_${course?._id}`})
                 } else if (data?.startsWith('goto_')) {
+                    await ctx.answerCbQuery()
                     const parts = data?.split('_')
                     const course = await getCourse({id: parts[1]})
                     
