@@ -159,7 +159,7 @@ class TestSystem {
 		}
 	}
 
-	async passEmptyLevel(ctx, level) {
+	async passEmptyLevel(ctx, level, correctCount, totalQuestions) {
 		const chat_id = ctx?.message?.chat?.id || ctx.update?.callback_query?.message?.chat?.id;
 
 		const currentLevelIndex = LEVELS.indexOf(level);
@@ -167,7 +167,8 @@ class TestSystem {
 
 		if (!nextLevel) {
 			const finishTesk = await findButton(['result_finish_template_message']);
-			const messageText = finishTesk[0].replace(/{{current_level}}/g, level);
+			const percentage = Math.round((correctCount / totalQuestions) * 100);
+			const messageText = finishTesk[0].replace(/{{current_level}}/g, level).replace(/{{percentage}}/g, percentage).replace(/{{level}}/g, level);
 
 			await sendMessage({ ctx, message: messageText, save: false });
 
@@ -275,14 +276,13 @@ class TestSystem {
 			const levelAnswers = Object.values(answers).filter(ans => ans && ans.level === current_level);
 			const totalQuestions = await Task.countDocuments({ type: current_level });
 
-			// ✅ Якщо питань немає — автоматично проходимо рівень
-			if (totalQuestions === 0) {
-				await this.passEmptyLevel(ctx, current_level);
-				return;
-			}
-
 			const correctCount = levelAnswers.filter(ans => ans.correct).length;
 			const percentage = correctCount / totalQuestions;
+			// ✅ Якщо питань немає — автоматично проходимо рівень
+			if (totalQuestions === 0) {
+				await this.passEmptyLevel(ctx, current_level,correctCount,totalQuestions);
+				return;
+			}
 
 			const passed = percentage >= PASS_THRESHOLD;
 			const borderline = percentage >= 0.65 && percentage < PASS_THRESHOLD;
@@ -417,7 +417,7 @@ class TestSystem {
 			}
 
 			let finishTest = await findButton(['result_level_template_message']);
-			messageText += finishTest[0].replace(/{{current_level}}/g, finalLevel);
+			messageText += finishTest[0].replace(/{{current_level}}/g, finalLevel).replace(/{{level}}/g, finalLevel).replace(/{{percentage}}/g, percentage);
 
 			await sendMessage({ ctx, message: messageText, button });
 
